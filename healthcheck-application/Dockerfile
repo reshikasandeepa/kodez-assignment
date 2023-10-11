@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18
 
 WORKDIR /app
 
@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE $PORT
 
-CMD ["node", "your-node-app.js"]
+CMD ["node", "app.js"]
