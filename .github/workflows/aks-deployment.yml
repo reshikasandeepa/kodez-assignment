@@ -21,7 +21,7 @@ jobs:
       with:
         client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
         tenant-id: ${{ secrets.TENANT }}
-        subscription-id: ${{ secrets.SUBSCRIPTION }
+        subscription-id: ${{ secrets.SUBSCRIPTION }}
 
     - name: Set up kubelogin for non-interactive login
       uses: azure/use-kubelogin@v1
