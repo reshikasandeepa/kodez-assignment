@@ -14,6 +14,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Install asdf
+      run: |
+        git clone https://github.com/asdf-vm/asdf.git
+        echo '. $HOME/.asdf/asdf.sh' >> $HOME/.bashrc
+        echo '. $HOME/.asdf/completions/asdf.bash' >> $HOME/.bashrc
+      if: runner.os == 'Linux'
+
+    - name: Install kubelogin plugin
+      run: asdf plugin add kubelogin
+
+    - name: Install the latest version of kubelogin
+      run: asdf install kubelogin latest
+
+    - name: Set the global kubelogin version to the latest
+      run: asdf global kubelogin latest
     - name: Install Azure CLI
       run: |
         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -23,14 +38,6 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Install kubelogin
-      run: |
-        wget https://github.com/int128/kubelogin/releases/download/v1.28.0/kubelogin_linux_amd64.zip
-        unzip -o kubelogin_linux_amd64.zip
-        chmod +x kubelogin
-        sudo mv kubelogin /usr/local/bin/
-      if: runner.os == 'Linux'
 
     - name: Azure CLI AKS authentication
       run: |
