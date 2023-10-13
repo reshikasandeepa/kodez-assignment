@@ -6,45 +6,39 @@ on:
     types:
       - completed
 
+env:
+  DEPLOYMENT_MANIFEST_PATH: "k8s-manifests/"
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - name: Install snapd
-      run: |
-        sudo apt update && sudo apt install snapd
-      if: runner.os == 'Linux'
-
-    - name: Install kubelogin plugin
-      run: sudo snap install kubelogin
-
-    - name: Install Azure CLI
-      run: |
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-      if: runner.os == 'Linux'
-
-    - name: Install kubectl
-      run: |
-        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-        chmod +x kubectl
-        sudo mv kubectl /usr/local/bin/
-      shell: bash
-
-    - name: Set up Azure CLI
-      uses: azure/login@v1
+    - name: Azure login
+      uses: azure/login@v1.4.6
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
+        tenant-id: ${{ secrets.TENANT }}
+        subscription-id: ${{ secrets.SUBSCRIPTION }
 
-    - name: Azure CLI AKS authentication
-      run: |
-        az account set --subscription ${{ secrets.SUBSCRIPTION }}
-        az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
-        kubelogin convert-kubeconfig -l azurecli
-        
-    - name: Deploy Kubernetes Manifests
-      run: |
-        kubectl apply -f k8s-manifests/
+    - name: Set up kubelogin for non-interactive login
+      uses: azure/use-kubelogin@v1
+      with:
+        ubelogin-version: 'v0.0.25'
+
+    - name: Get K8s context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        admin: 'false'
+        use-kubelogin: 'true'
+
+    - name: Deploys application
+      uses: Azure/k8s-deploy@v4
+      with:
+        action: deploy
+        manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
+
