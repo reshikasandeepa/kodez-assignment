@@ -19,6 +19,13 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Install kubelogin
+      run: |
+        wget https://github.com/int128/kubelogin/releases/download/vX.Y.Z/kubelogin_linux_amd64
+        chmod +x kubelogin_linux_amd64
+        sudo mv kubelogin_linux_amd64 /usr/local/bin/kubelogin
+      if: runner.os == 'Linux'
+
     - name: Azure CLI AKS authentication
       run: |
         az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
