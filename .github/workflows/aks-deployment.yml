@@ -36,7 +36,8 @@ jobs:
       run: |
         az account set --subscription ${{ secrets.SUBSCRIPTION }}
         az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
-        kubelogin convert-kubeconfig -l azurecli
+        echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+        kubelogin convert-kubeconfig -l azureclii
         
     - name: Deploy Kubernetes Manifests
       run: |
