@@ -20,8 +20,11 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Azure CLI AKS authentication
-      run: az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
+      run: |
+        az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
+        kubelogin convert-kubeconfig -l azurecli
 
+    
     - name: Deploy Kubernetes Manifests
       run: |
         kubectl apply -f k8s-manifests/
