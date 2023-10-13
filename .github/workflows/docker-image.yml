@@ -21,6 +21,7 @@ jobs:
         
     - name: Build and Push Docker Image
       run: |
+        cd kodez-assignment/healthcheck-application
         docker build -t appacr5.azurecr.io/my-image:latest .
         docker push appacr5.azurecr.io/my-image:latest
         echo "Pushed Docker image to ACR"
