@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthcheck-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: healthcheck-app
+  template:
+    metadata:
+      labels:
+        app: healthcheck-app
+    spec:
+      containers:
+      - name: healthcheck-app
+        image: appacr5.azurecr.io/app/healthcheck:latest
+        ports:
+        - containerPort: 3000 
+        env:
+        - name: PORT
+          value: "3000"
