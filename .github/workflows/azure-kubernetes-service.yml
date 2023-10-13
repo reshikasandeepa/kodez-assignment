@@ -24,10 +24,7 @@ jobs:
       - name: Azure login
         uses: azure/login@v1.4.6
         with:
-          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
-          tenant-id: ${{ secrets.TENANT }}
-          subscription-id: ${{ secrets.SUBSCRIPTION }}
-          client-secret: ${{ secrets.AZURE_SERVICE_PRINCIPAL_SECRET }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Use kubelogin to configure your kubeconfig for Azure auth
       - name: Set up kubelogin for non-interactive login
