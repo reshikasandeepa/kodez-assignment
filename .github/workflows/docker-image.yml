@@ -1,0 +1,26 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to ACR
+      run: |
+        docker login appacr5.azurecr.io -u ${{ secrets.ACR_ADMIN_USERNAME }} -p ${{ secrets.ACR_ADMIN_PASSWORD }}
+        echo "Logged in to ACR"
+        
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t appacr5.azurecr.io/my-image:latest .
+        docker push appacr5.azurecr.io/my-image:latest
+        echo "Pushed Docker image to ACR"
