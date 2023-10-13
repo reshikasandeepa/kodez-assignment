@@ -21,7 +21,7 @@ jobs:
 
     - name: Install kubelogin plugin
       run: sudo snap install kubelogin
-      
+
     - name: Install Azure CLI
       run: |
         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -37,7 +37,7 @@ jobs:
         az account set --subscription ${{ secrets.SUBSCRIPTION }}
         az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
         echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
-        kubelogin convert-kubeconfig -l azureclii
+        kubelogin convert-kubeconfig -l azurecli
         
     - name: Deploy Kubernetes Manifests
       run: |
