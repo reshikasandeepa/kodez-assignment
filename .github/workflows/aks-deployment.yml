@@ -27,16 +27,24 @@ jobs:
         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
       if: runner.os == 'Linux'
 
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+      shell: bash
+
     - name: Set up Azure CLI
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
+        password: ${{ secrets.AZURE_SERVICE_PRINCIPAL_SECRET }}
+        service-principal: true
 
     - name: Azure CLI AKS authentication
       run: |
         az account set --subscription ${{ secrets.SUBSCRIPTION }}
         az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
-        echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
         kubelogin convert-kubeconfig -l azurecli
         
     - name: Deploy Kubernetes Manifests
