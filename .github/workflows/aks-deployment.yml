@@ -14,6 +14,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Install Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      if: runner.os == 'Linux'
+
     - name: Set up Azure CLI
       uses: azure/login@v1
       with:
@@ -27,13 +32,10 @@ jobs:
         sudo mv kubelogin /usr/local/bin/
       if: runner.os == 'Linux'
 
-
     - name: Azure CLI AKS authentication
       run: |
-        az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
-        kubelogin convert-kubeconfig -| azurecli
+        kubelogin get-kubeconfig | az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
 
-    
     - name: Deploy Kubernetes Manifests
       run: |
         kubectl apply -f k8s-manifests/
