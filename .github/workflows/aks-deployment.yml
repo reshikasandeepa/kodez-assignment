@@ -1,0 +1,27 @@
+name: Deploy to AKS
+
+on:
+  workflow_run:
+    workflows: ["Docker Image CI"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure CLI AKS authentication
+      run: az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
+
+    - name: Deploy Kubernetes Manifests
+      run: |
+        kubectl apply -f k8s-manifests/
