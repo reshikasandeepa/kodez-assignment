@@ -37,10 +37,7 @@ jobs:
     - name: Set up Azure CLI
       uses: azure/login@v1
       with:
-        client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
-        client-secret: ${{ secrets.AZURE_SERVICE_PRINCIPAL_SECRET }}
-        tenant-id: ${{ secrets.TENANT }}
-        subscription-id: ${{ secrets.SUBSCRIPTION }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Azure CLI AKS authentication
       run: |
